@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
         lineHeight: 25,
         textAlign: 'right',
         letterSpacing: -0.24,
-        color: '#003300',
+        color: '#009900',
         fontFamily: 'OpenSans_700Bold'
     },
     productsList: {

@@ -1,13 +1,23 @@
+import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, TouchableNativeFeedback } from 'react-native';
 
 export default function Header() {
+
+    const navigation = useNavigation();
+
+    const handleOnPress = () => {
+        navigation.navigate('Home');
+    }
+
     return (
-        <View style={styles.container}>
-            <Image source={require('../assets/logo.png')} style={styles.logo} />
-            <Text style={styles.text}>Delivery</Text>
-        </View>
+        <TouchableNativeFeedback onPress={handleOnPress}>
+            <View style={styles.container}>
+                <Image source={require('../assets/logo.png')} style={styles.logo} />
+                <Text style={styles.text}>Delivery</Text>
+            </View>
+        </TouchableNativeFeedback>
     );
 }
 
