@@ -1,7 +1,10 @@
 import StepsHeader from './StepsHeader';
 import ProductsList from './ProductsList';
-import Footer from '../Footer';
+import OrderSummary from './OrderSummary';
+import OrderLocation from './OrderLocation';
 import './styles.css';
+
+
 
 
 function Orders() {
@@ -11,6 +14,8 @@ function Orders() {
             <div className="orders-container">
                 <StepsHeader />
                 <ProductsList />
+                <OrderLocation />
+                <OrderSummary />
             </div>
         </>
     )
