@@ -1,12 +1,24 @@
 import { OpenSans_700Bold } from '@expo-google-fonts/open-sans';
 import { useNavigation } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
-import { RectButton } from 'react-native-gesture-handler';
+import { Alert, StyleSheet, Text, View, Linking } from 'react-native';
+import { RectButton, TouchableNativeFeedback } from 'react-native-gesture-handler';
+import { confirmDelivery } from '../api';
 import Header from '../Header';
 import OrderCard from '../OrderCard';
+import { Order } from '../types';
 
-function OrderDetails() {
+type Props = {
+  route: {
+    params: {
+      order: Order;
+    }
+  }
+}
+
+function OrderDetails({ route }: Props) {
+  const { order } = route.params;
   const navigation = useNavigation();
 
   const handleOnCancel = () => {
@@ -14,18 +26,25 @@ function OrderDetails() {
   }
 
   const handleConfirmDelivery = () => {
-
+    confirmDelivery(order.id)
+      .then(() => {
+        Alert.alert(`Pedido ${order.id} confirmado com sucesso!`);
+        navigation.navigate('Orders');
+      })
+      .catch(() => {
+        Alert.alert(`Houve um erro ao confirmar o pedido ${order.id} :/`);
+      })
   }
 
   const handleStartNavigation = () => {
-
+    Linking.openURL(`https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=${order.latitude},${order.longitude}`);
   }
 
   return (
     <>
       <Header />
       <View style={styles.container}>
-        <OrderCard />
+        <OrderCard order={order} />
         <RectButton style={styles.button} onPress={handleStartNavigation}>
           <Text style={styles.buttonText}>INICIAR NAVEGAÇÃO</Text>
         </RectButton>
