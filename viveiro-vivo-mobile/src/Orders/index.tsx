@@ -1,6 +1,6 @@
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, Alert, Text } from 'react-native';
+import { StyleSheet, ScrollView, Alert, Text, Image } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { fetchOrders } from '../api';
 import Header from '../Header';
@@ -38,14 +38,17 @@ function Orders() {
             <Header />
             <ScrollView style={styles.container}>
                 {isLoading ? (
-                    <Text>Buscando pedidos, isto pode demorar um pouco. Por favor aguarde...</Text>
+                    <>
+                        <Text>Buscando pedidos, isto pode demorar um pouco. Por favor aguarde...</Text>
+                        <Image source={require('../assets/sleepdatabase.jpg')} style={styles.logo} />
+                    </>
                 ) : (
-                        orders.map(order => (
-                            <TouchableWithoutFeedback key={order.id} onPress={() => { handleOnPress(order) }}>
-                                <OrderCard order={order} />
-                            </TouchableWithoutFeedback>
-                        ))
-                    )}
+                    orders.map(order => (
+                        <TouchableWithoutFeedback key={order.id} onPress={() => { handleOnPress(order) }}>
+                            <OrderCard order={order} />
+                        </TouchableWithoutFeedback>
+                    ))
+                )}
             </ScrollView>
         </>
     );
@@ -55,6 +58,11 @@ const styles = StyleSheet.create({
     container: {
         paddingRight: '5%',
         paddingLeft: '5%',
+        marginTop: '5%'
+    },
+    logo: {
+        height: 195,
+        width: 214,
     }
 });
 
