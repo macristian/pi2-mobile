@@ -1,6 +1,5 @@
 import './styles.css';
 import { ReactComponent as MainImage } from './logo-raposa-entrega-border.svg';
-import Footer from '../Footer';
 import { Link } from 'react-router-dom';
 
 function Home() {
