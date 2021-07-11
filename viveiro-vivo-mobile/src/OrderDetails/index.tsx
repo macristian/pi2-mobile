@@ -1,8 +1,10 @@
 import { OpenSans_700Bold } from '@expo-google-fonts/open-sans';
 import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { Alert, StyleSheet, Text, View, Linking } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
+import NotificationHelper from '../services/NotificationHelper.js';
+import * as Notifications from 'expo-notifications';
 import { confirmDelivery } from '../api';
 import Header from '../Header';
 import OrderCard from '../OrderCard';
@@ -16,6 +18,14 @@ type Props = {
   }
 }
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: false,
+  }),
+});
+
 function OrderDetails({ route }: Props) {
   const { order } = route.params;
   const navigation = useNavigation();
@@ -27,17 +37,49 @@ function OrderDetails({ route }: Props) {
   const handleConfirmDelivery = () => {
     confirmDelivery(order.id)
       .then(() => {
-        Alert.alert(`Pedido ${order.id} confirmado com sucesso!`);
-        navigation.navigate('Orders');
+        NotificationHelper.notification(
+          `Pedido ${order.id} confirmado com sucesso!`,
+          "Você já está pronto para o próximo. Vá com muito cuidado!",
+          parseInt(timerTrigger)
+        );
       })
       .catch(() => {
         Alert.alert(`Houve um erro ao confirmar o pedido ${order.id} :/`);
       })
   }
 
+  const [timerTrigger, setTimerTrigger] = useState(0);
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
   const handleStartNavigation = () => {
-    
+    Linking.openURL(`https://www.google.com/maps/dir/?api=1&travelmode=driving&dir_action=navigate&destination=${order.latitude},${order.longitude}`);
   }
+
+  useEffect(() => {
+    NotificationHelper.registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    notificationListener.current = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        setNotification(notification);
+      }
+    );
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        console.log(response);
+      }
+    );
+
+    return () => {
+      Notifications.removeNotificationSubscription(notificationListener);
+      Notifications.removeNotificationSubscription(responseListener);
+    };
+  }, []);
 
   return (
     <>
